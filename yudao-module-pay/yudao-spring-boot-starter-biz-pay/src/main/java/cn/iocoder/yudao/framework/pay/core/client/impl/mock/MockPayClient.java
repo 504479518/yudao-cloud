@@ -9,7 +9,6 @@ import cn.iocoder.yudao.framework.pay.core.client.dto.transfer.PayTransferUnifie
 import cn.iocoder.yudao.framework.pay.core.client.impl.AbstractPayClient;
 import cn.iocoder.yudao.framework.pay.core.client.impl.NonePayClientConfig;
 import cn.iocoder.yudao.framework.pay.core.enums.channel.PayChannelEnum;
-import cn.iocoder.yudao.framework.pay.core.enums.transfer.PayTransferTypeEnum;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -58,17 +57,17 @@ public class MockPayClient extends AbstractPayClient<NonePayClientConfig> {
     }
 
     @Override
-    protected PayTransferRespDTO doParseTransferNotify(Map<String, String> params, String body) throws Throwable {
+    protected PayTransferRespDTO doParseTransferNotify(Map<String, String> params, String body, Map<String, String> headers) {
         throw new UnsupportedOperationException("未实现");
     }
 
     @Override
-    protected PayRefundRespDTO doParseRefundNotify(Map<String, String> params, String body) {
+    protected PayRefundRespDTO doParseRefundNotify(Map<String, String> params, String body, Map<String, String> headers) {
         throw new UnsupportedOperationException("模拟支付无退款回调");
     }
 
     @Override
-    protected PayOrderRespDTO doParseOrderNotify(Map<String, String> params, String body) {
+    protected PayOrderRespDTO doParseOrderNotify(Map<String, String> params, String body, Map<String, String> headers) {
         throw new UnsupportedOperationException("模拟支付无支付回调");
     }
 
@@ -78,7 +77,7 @@ public class MockPayClient extends AbstractPayClient<NonePayClientConfig> {
     }
 
     @Override
-    protected PayTransferRespDTO doGetTransfer(String outTradeNo, PayTransferTypeEnum type) {
+    protected PayTransferRespDTO doGetTransfer(String outTradeNo) {
         throw new UnsupportedOperationException("待实现");
     }
 

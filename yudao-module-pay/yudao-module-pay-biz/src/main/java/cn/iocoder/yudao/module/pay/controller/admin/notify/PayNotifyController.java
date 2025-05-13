@@ -3,14 +3,15 @@ package cn.iocoder.yudao.module.pay.controller.admin.notify;
 import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.pay.core.client.PayClient;
 import cn.iocoder.yudao.framework.pay.core.client.dto.order.PayOrderRespDTO;
 import cn.iocoder.yudao.framework.pay.core.client.dto.refund.PayRefundRespDTO;
 import cn.iocoder.yudao.framework.pay.core.client.dto.transfer.PayTransferRespDTO;
+import cn.iocoder.yudao.framework.tenant.core.aop.TenantIgnore;
 import cn.iocoder.yudao.module.pay.controller.admin.notify.vo.PayNotifyTaskDetailRespVO;
 import cn.iocoder.yudao.module.pay.controller.admin.notify.vo.PayNotifyTaskPageReqVO;
 import cn.iocoder.yudao.module.pay.controller.admin.notify.vo.PayNotifyTaskRespVO;
-import cn.iocoder.yudao.module.pay.convert.notify.PayNotifyTaskConvert;
 import cn.iocoder.yudao.module.pay.dal.dataobject.app.PayAppDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.notify.PayNotifyLogDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.notify.PayNotifyTaskDO;
@@ -62,9 +63,11 @@ public class PayNotifyController {
     @PostMapping(value = "/order/{channelId}")
     @Operation(summary = "支付渠道的统一【支付】回调")
     @PermitAll
+    @TenantIgnore
     public String notifyOrder(@PathVariable("channelId") Long channelId,
                               @RequestParam(required = false) Map<String, String> params,
-                              @RequestBody(required = false) String body) {
+                              @RequestBody(required = false) String body,
+                              @RequestHeader Map<String, String> headers) {
         log.info("[notifyOrder][channelId({}) 回调数据({}/{})]", channelId, params, body);
         // 1. 校验支付渠道是否存在
         PayClient payClient = channelService.getPayClient(channelId);
@@ -74,7 +77,7 @@ public class PayNotifyController {
         }
 
         // 2. 解析通知数据
-        PayOrderRespDTO notify = payClient.parseOrderNotify(params, body);
+        PayOrderRespDTO notify = payClient.parseOrderNotify(params, body, headers);
         orderService.notifyOrder(channelId, notify);
         return "success";
     }
@@ -82,9 +85,11 @@ public class PayNotifyController {
     @PostMapping(value = "/refund/{channelId}")
     @Operation(summary = "支付渠道的统一【退款】回调")
     @PermitAll
+    @TenantIgnore
     public String notifyRefund(@PathVariable("channelId") Long channelId,
                                @RequestParam(required = false) Map<String, String> params,
-                               @RequestBody(required = false) String body) {
+                               @RequestBody(required = false) String body,
+                               @RequestHeader Map<String, String> headers) {
         log.info("[notifyRefund][channelId({}) 回调数据({}/{})]", channelId, params, body);
         // 1. 校验支付渠道是否存在
         PayClient payClient = channelService.getPayClient(channelId);
@@ -94,7 +99,7 @@ public class PayNotifyController {
         }
 
         // 2. 解析通知数据
-        PayRefundRespDTO notify = payClient.parseRefundNotify(params, body);
+        PayRefundRespDTO notify = payClient.parseRefundNotify(params, body, headers);
         refundService.notifyRefund(channelId, notify);
         return "success";
     }
@@ -102,9 +107,11 @@ public class PayNotifyController {
     @PostMapping(value = "/transfer/{channelId}")
     @Operation(summary = "支付渠道的统一【转账】回调")
     @PermitAll
+    @TenantIgnore
     public String notifyTransfer(@PathVariable("channelId") Long channelId,
                                  @RequestParam(required = false) Map<String, String> params,
-                                 @RequestBody(required = false) String body) {
+                                 @RequestBody(required = false) String body,
+                                 @RequestHeader Map<String, String> headers) {
         log.info("[notifyTransfer][channelId({}) 回调数据({}/{})]", channelId, params, body);
         // 1. 校验支付渠道是否存在
         PayClient payClient = channelService.getPayClient(channelId);
@@ -114,7 +121,7 @@ public class PayNotifyController {
         }
 
         // 2. 解析通知数据
-        PayTransferRespDTO notify = payClient.parseTransferNotify(params, body);
+        PayTransferRespDTO notify = payClient.parseTransferNotify(params, body, headers);
         payTransferService.notifyTransfer(channelId, notify);
         return "success";
     }
@@ -131,7 +138,12 @@ public class PayNotifyController {
         // 拼接返回
         PayAppDO app = appService.getApp(task.getAppId());
         List<PayNotifyLogDO> logs = notifyService.getNotifyLogList(id);
-        return success(PayNotifyTaskConvert.INSTANCE.convert(task, app, logs));
+        return success(BeanUtils.toBean(task, PayNotifyTaskDetailRespVO.class, respVO -> {
+            if (app != null) {
+                respVO.setAppName(app.getName());
+            }
+            respVO.setLogs(BeanUtils.toBean(logs, PayNotifyTaskDetailRespVO.Log.class));
+        }));
     }
 
     @GetMapping("/page")
@@ -143,8 +155,15 @@ public class PayNotifyController {
             return success(PageResult.empty());
         }
         // 拼接返回
-        Map<Long, PayAppDO> appMap = appService.getAppMap(convertList(pageResult.getList(), PayNotifyTaskDO::getAppId));
-        return success(PayNotifyTaskConvert.INSTANCE.convertPage(pageResult, appMap));
+        Map<Long, PayAppDO> apps = appService.getAppMap(convertList(pageResult.getList(), PayNotifyTaskDO::getAppId));
+        
+        // 转换对象
+        return success(BeanUtils.toBean(pageResult, PayNotifyTaskRespVO.class, order -> {
+            PayAppDO app = apps.get(order.getAppId());
+            if (app != null) {
+                order.setAppName(app.getName());
+            }
+        }));
     }
 
 }

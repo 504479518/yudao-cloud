@@ -165,32 +165,10 @@ yudao:
   tenant: # 多租户相关配置项
     enable: true
     ignore-urls:
-      - /admin-api/system/tenant/get-id-by-name # 基于名字获取租户，不许带租户编号
-      - /admin-api/system/tenant/get-by-website # 基于域名获取租户，不许带租户编号
-      - /admin-api/system/tenant/simple-list # 获取租户列表，不许带租户编号
-      - /admin-api/system/captcha/get-image # 获取图片验证码，和租户无关
-      - /admin-api/system/captcha/get # 获取图片验证码，和租户无关
-      - /admin-api/system/captcha/check # 校验图片验证码，和租户无关
-      - /admin-api/system/sms/callback/* # 短信回调接口，无法带上租户编号
-      - /rpc-api/system/tenant/valid # 防止递归。避免调用 /rpc-api/system/tenant/valid 接口时，又去触发 /rpc-api/system/tenant/valid 去校验
-      - /rpc-api/system/tenant/id-list # 获得租户列表的时候，无需传递租户编号
-      - /rpc-api/system/oauth2/token/check # 访问令牌校验时，无需传递租户编号；主要解决上传文件的场景，前端不会传递 tenant-id！
+    ignore-visit-urls:
+      - /admin-api/system/user/profile/**
+      - /admin-api/system/auth/**
     ignore-tables:
-      - system_tenant
-      - system_tenant_package
-      - system_dict_data
-      - system_dict_type
-      - system_error_code
-      - system_menu
-      - system_sms_channel
-      - system_sms_template
-      - system_sms_log
-      - system_sensitive_word
-      - system_oauth2_client
-      - system_mail_account
-      - system_mail_template
-      - system_mail_log
-      - system_notify_template
     ignore-caches:
       - user_role_ids
       - permission_menu_ids

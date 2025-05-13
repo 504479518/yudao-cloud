@@ -11,13 +11,10 @@ import cn.iocoder.yudao.framework.pay.core.client.dto.refund.PayRefundUnifiedReq
 import cn.iocoder.yudao.framework.pay.core.client.dto.transfer.PayTransferRespDTO;
 import cn.iocoder.yudao.framework.pay.core.client.dto.transfer.PayTransferUnifiedReqDTO;
 import cn.iocoder.yudao.framework.pay.core.client.exception.PayException;
-import cn.iocoder.yudao.framework.pay.core.enums.transfer.PayTransferTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
-import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.NOT_IMPLEMENTED;
-import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.json.JsonUtils.toJsonString;
 
 /**
@@ -26,7 +23,7 @@ import static cn.iocoder.yudao.framework.common.util.json.JsonUtils.toJsonString
  * @author 芋道源码
  */
 @Slf4j
-public abstract class AbstractPayClient<Config extends PayClientConfig> implements PayClient {
+public abstract class AbstractPayClient<Config extends PayClientConfig> implements PayClient<Config> {
 
     /**
      * 渠道编号
@@ -77,6 +74,11 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
         return channelId;
     }
 
+    @Override
+    public Config getConfig() {
+        return config;
+    }
+
     // ============ 支付相关 ==========
 
     @Override
@@ -101,19 +103,19 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
             throws Throwable;
 
     @Override
-    public final PayOrderRespDTO parseOrderNotify(Map<String, String> params, String body) {
+    public final PayOrderRespDTO parseOrderNotify(Map<String, String> params, String body, Map<String, String> headers) {
         try {
-            return doParseOrderNotify(params, body);
+            return doParseOrderNotify(params, body, headers);
         } catch (ServiceException ex) { // 业务异常，都是实现类已经翻译，所以直接抛出即可
             throw ex;
         } catch (Throwable ex) {
-            log.error("[parseOrderNotify][客户端({}) params({}) body({}) 解析失败]",
-                    getId(), params, body, ex);
+            log.error("[parseOrderNotify][客户端({}) params({}) body({}) headers({}) 解析失败]",
+                    getId(), params, body, headers, ex);
             throw buildPayException(ex);
         }
     }
 
-    protected abstract PayOrderRespDTO doParseOrderNotify(Map<String, String> params, String body)
+    protected abstract PayOrderRespDTO doParseOrderNotify(Map<String, String> params, String body, Map<String, String> headers)
             throws Throwable;
 
     @Override
@@ -155,19 +157,19 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
     protected abstract PayRefundRespDTO doUnifiedRefund(PayRefundUnifiedReqDTO reqDTO) throws Throwable;
 
     @Override
-    public final PayRefundRespDTO parseRefundNotify(Map<String, String> params, String body) {
+    public final PayRefundRespDTO parseRefundNotify(Map<String, String> params, String body, Map<String, String> headers) {
         try {
-            return doParseRefundNotify(params, body);
+            return doParseRefundNotify(params, body, headers);
         } catch (ServiceException ex) { // 业务异常，都是实现类已经翻译，所以直接抛出即可
             throw ex;
         } catch (Throwable ex) {
-            log.error("[parseRefundNotify][客户端({}) params({}) body({}) 解析失败]",
-                    getId(), params, body, ex);
+            log.error("[parseRefundNotify][客户端({}) params({}) body({}) headers({}) 解析失败]",
+                    getId(), params, body, headers, ex);
             throw buildPayException(ex);
         }
     }
 
-    protected abstract PayRefundRespDTO doParseRefundNotify(Map<String, String> params, String body)
+    protected abstract PayRefundRespDTO doParseRefundNotify(Map<String, String> params, String body, Map<String, String> headers)
             throws Throwable;
 
     @Override
@@ -188,7 +190,6 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
 
     @Override
     public final PayTransferRespDTO unifiedTransfer(PayTransferUnifiedReqDTO reqDTO) {
-        validatePayTransferReqDTO(reqDTO);
         PayTransferRespDTO resp;
         try {
             resp = doUnifiedTransfer(reqDTO);
@@ -202,48 +203,32 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
         }
         return resp;
     }
-    private void validatePayTransferReqDTO(PayTransferUnifiedReqDTO reqDTO) {
-        PayTransferTypeEnum transferType = PayTransferTypeEnum.typeOf(reqDTO.getType());
-        switch (transferType) {
-            case ALIPAY_BALANCE: {
-                ValidationUtils.validate(reqDTO,  PayTransferTypeEnum.Alipay.class);
-                break;
-            }
-            case WX_BALANCE: {
-                ValidationUtils.validate(reqDTO, PayTransferTypeEnum.WxPay.class);
-                break;
-            }
-            default: {
-                throw exception(NOT_IMPLEMENTED);
-            }
-        }
-    }
 
     @Override
-    public final PayTransferRespDTO parseTransferNotify(Map<String, String> params, String body) {
+    public final PayTransferRespDTO parseTransferNotify(Map<String, String> params, String body, Map<String, String> headers) {
         try {
-            return doParseTransferNotify(params, body);
+            return doParseTransferNotify(params, body, headers);
         } catch (ServiceException ex) { // 业务异常，都是实现类已经翻译，所以直接抛出即可
             throw ex;
         } catch (Throwable ex) {
-            log.error("[doParseTransferNotify][客户端({}) params({}) body({}) 解析失败]",
-                    getId(), params, body, ex);
+            log.error("[doParseTransferNotify][客户端({}) params({}) body({}) headers({}) 解析失败]",
+                    getId(), params, body, headers, ex);
             throw buildPayException(ex);
         }
     }
 
-    protected abstract PayTransferRespDTO doParseTransferNotify(Map<String, String> params, String body)
+    protected abstract PayTransferRespDTO doParseTransferNotify(Map<String, String> params, String body, Map<String, String> headers)
             throws Throwable;
 
     @Override
-    public final PayTransferRespDTO getTransfer(String outTradeNo, PayTransferTypeEnum type) {
+    public final PayTransferRespDTO getTransfer(String outTradeNo) {
         try {
-            return doGetTransfer(outTradeNo, type);
+            return doGetTransfer(outTradeNo);
         } catch (ServiceException ex) { // 业务异常，都是实现类已经翻译，所以直接抛出即可
             throw ex;
         } catch (Throwable ex) {
-            log.error("[getTransfer][客户端({}) outTradeNo({}) type({}) 查询转账单异常]",
-                    getId(), outTradeNo, type, ex);
+            log.error("[getTransfer][客户端({}) outTradeNo({}) 查询转账单异常]",
+                    getId(), outTradeNo, ex);
             throw buildPayException(ex);
         }
     }
@@ -251,7 +236,7 @@ public abstract class AbstractPayClient<Config extends PayClientConfig> implemen
     protected abstract PayTransferRespDTO doUnifiedTransfer(PayTransferUnifiedReqDTO reqDTO)
             throws Throwable;
 
-    protected abstract PayTransferRespDTO doGetTransfer(String outTradeNo, PayTransferTypeEnum type)
+    protected abstract PayTransferRespDTO doGetTransfer(String outTradeNo)
             throws Throwable;
 
     // ========== 各种工具方法 ==========
