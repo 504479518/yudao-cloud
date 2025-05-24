@@ -137,7 +137,7 @@ public class FileConfigServiceImpl implements FileConfigService {
     /**
      * 清空指定文件配置
      *
-     * @param id 配置编号
+     * @param id     配置编号
      * @param master 是否主配置
      */
     private void clearCache(Long id, Boolean master) {
