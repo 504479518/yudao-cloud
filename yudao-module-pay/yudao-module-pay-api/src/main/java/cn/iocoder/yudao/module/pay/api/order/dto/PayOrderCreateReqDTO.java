@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.pay.api.order.dto;
 
+import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
+import cn.iocoder.yudao.framework.common.validation.InEnum;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -22,11 +24,22 @@ public class PayOrderCreateReqDTO implements Serializable {
      */
     @NotNull(message = "应用标识不能为空")
     private String appKey;
+
     /**
      * 用户 IP
      */
     @NotEmpty(message = "用户 IP 不能为空")
     private String userIp;
+
+    /**
+     * 用户编号
+     */
+    private Long userId;
+    /**
+     * 用户类型
+     */
+    @InEnum(UserTypeEnum.class)
+    private Integer userType;
 
     // ========== 商户相关字段 ==========
 
