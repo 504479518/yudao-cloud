@@ -2,7 +2,9 @@ package cn.iocoder.yudao.module.bpm.api.event;
 
 import cn.iocoder.yudao.module.bpm.framework.flowable.core.util.BpmHttpRequestUtils;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
@@ -12,6 +14,9 @@ import javax.validation.Valid;
  */
 public class CrmReceivableStatusListener extends BpmProcessInstanceStatusEventListener {
 
+    @Resource
+    private RestTemplate loadBalancedRestTemplate;
+
     @Override
     public String getProcessDefinitionKey() {
         return "crm-receivable-audit";
@@ -20,7 +25,8 @@ public class CrmReceivableStatusListener extends BpmProcessInstanceStatusEventLi
     @Override
     public void onEvent(@RequestBody @Valid BpmProcessInstanceStatusEvent event) {
         BpmHttpRequestUtils.executeBpmHttpRequest(event,
-                "http://crm-server/rpc-api/crm/receivable/update-audit-status");
+                "http://crm-server/rpc-api/crm/receivable/update-audit-status",
+                loadBalancedRestTemplate);
     }
 
 }
