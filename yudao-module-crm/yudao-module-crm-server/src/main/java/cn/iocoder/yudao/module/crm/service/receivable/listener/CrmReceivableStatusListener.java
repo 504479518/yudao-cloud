@@ -5,7 +5,6 @@ import cn.iocoder.yudao.module.bpm.api.event.BpmProcessInstanceStatusEventListen
 import cn.iocoder.yudao.module.crm.enums.ApiConstants;
 import cn.iocoder.yudao.module.crm.service.receivable.CrmReceivableService;
 import cn.iocoder.yudao.module.crm.service.receivable.CrmReceivableServiceImpl;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +19,6 @@ import javax.annotation.Resource;
  */
 @RestController
 @Validated
-@FeignClient(name = ApiConstants.NAME) // TODO 芋艿：fallbackFactory =
 public class CrmReceivableStatusListener extends BpmProcessInstanceStatusEventListener {
 
     private static final String PREFIX = ApiConstants.PREFIX + "/receivable";
