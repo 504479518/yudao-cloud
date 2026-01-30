@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.iot.core.biz.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -10,6 +12,8 @@ import javax.validation.constraints.NotEmpty;
  * @author 芋道源码
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class IotDeviceAuthReqDTO {
 
     /**
