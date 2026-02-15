@@ -3,10 +3,7 @@ package cn.iocoder.yudao.module.iot.gateway.service.device.remote;
 import cn.hutool.core.lang.Assert;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.iot.core.biz.IotDeviceCommonApi;
-import cn.iocoder.yudao.module.iot.core.biz.dto.IotDeviceAuthReqDTO;
-import cn.iocoder.yudao.module.iot.core.biz.dto.IotDeviceGetReqDTO;
-import cn.iocoder.yudao.module.iot.core.biz.dto.IotDeviceRespDTO;
-import cn.iocoder.yudao.module.iot.core.biz.dto.IotSubDeviceRegisterFullReqDTO;
+import cn.iocoder.yudao.module.iot.core.biz.dto.*;
 import cn.iocoder.yudao.module.iot.core.topic.auth.IotDeviceRegisterReqDTO;
 import cn.iocoder.yudao.module.iot.core.topic.auth.IotDeviceRegisterRespDTO;
 import cn.iocoder.yudao.module.iot.core.topic.auth.IotSubDeviceRegisterRespDTO;
@@ -44,7 +41,7 @@ public class IotDeviceApiImpl implements IotDeviceCommonApi {
     public void init() {
         IotGatewayProperties.RpcProperties rpc = gatewayProperties.getRpc();
         restTemplate = new RestTemplateBuilder()
-                .rootUri(rpc.getUrl() + "/rpc-api/iot/device")
+                .rootUri(rpc.getUrl())
                 .setReadTimeout(rpc.getReadTimeout())
                 .setConnectTimeout(rpc.getConnectTimeout())
                 .build();
@@ -52,12 +49,17 @@ public class IotDeviceApiImpl implements IotDeviceCommonApi {
 
     @Override
     public CommonResult<Boolean> authDevice(IotDeviceAuthReqDTO authReqDTO) {
-        return doPost("/auth", authReqDTO, new ParameterizedTypeReference<CommonResult<Boolean>>() { });
+        return doPost("/rpc-api/iot/device/auth", authReqDTO, new ParameterizedTypeReference<CommonResult<Boolean>>() { });
     }
 
     @Override
     public CommonResult<IotDeviceRespDTO> getDevice(IotDeviceGetReqDTO getReqDTO) {
-        return doPost("/get", getReqDTO, new ParameterizedTypeReference<CommonResult<IotDeviceRespDTO>>() { });
+        return doPost("/rpc-api/iot/device/get", getReqDTO, new ParameterizedTypeReference<CommonResult<IotDeviceRespDTO>>() { });
+    }
+
+    @Override
+    public CommonResult<List<IotModbusDeviceConfigRespDTO>> getModbusDeviceConfigList(IotModbusDeviceConfigListReqDTO listReqDTO) {
+        return doPost("/rpc-api/iot/modbus/config-list", listReqDTO, new ParameterizedTypeReference<CommonResult<List<IotModbusDeviceConfigRespDTO>>>() { });
     }
 
     @Override

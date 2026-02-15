@@ -18,13 +18,13 @@ public enum IotSceneRuleActionTypeEnum implements ArrayValuable<Integer> {
     /**
      * 设备属性设置
      *
-     * 对应 {@link IotDeviceMessageMethodEnum#PROPERTY_SET}
+     * 对应 {@link cn.iocoder.yudao.module.iot.core.enums.IotDeviceMessageMethodEnum#PROPERTY_SET}
      */
     DEVICE_PROPERTY_SET(1),
     /**
      * 设备服务调用
      *
-     * 对应 {@link IotDeviceMessageMethodEnum#SERVICE_INVOKE}
+     * 对应 {@link cn.iocoder.yudao.module.iot.core.enums.IotDeviceMessageMethodEnum#SERVICE_INVOKE}
      */
     DEVICE_SERVICE_INVOKE(2),
 

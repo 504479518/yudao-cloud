@@ -1,10 +1,10 @@
 package cn.iocoder.yudao.module.iot.controller.admin.product.vo.product;
 
+import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
+import cn.idev.excel.annotation.ExcelProperty;
 import cn.iocoder.yudao.framework.excel.core.annotations.DictFormat;
 import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
 import cn.iocoder.yudao.module.iot.enums.DictTypeConstants;
-import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
-import cn.idev.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -67,10 +67,15 @@ public class IotProductRespVO {
     @DictFormat(DictTypeConstants.NET_TYPE)
     private Integer netType;
 
-    @Schema(description = "数据格式", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @ExcelProperty(value = "数据格式", converter = DictConvert.class)
-    @DictFormat(DictTypeConstants.CODEC_TYPE)
-    private String codecType;
+    @Schema(description = "协议类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "mqtt")
+    @ExcelProperty(value = "协议类型", converter = DictConvert.class)
+    @DictFormat(DictTypeConstants.PROTOCOL_TYPE)
+    private String protocolType;
+
+    @Schema(description = "序列化类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "json")
+    @ExcelProperty(value = "序列化类型", converter = DictConvert.class)
+    @DictFormat(DictTypeConstants.SERIALIZE_TYPE)
+    private String serializeType;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")

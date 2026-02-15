@@ -4,7 +4,10 @@ import cn.iocoder.yudao.framework.tenant.core.db.TenantBaseDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * IoT 产品 DO
@@ -78,12 +81,16 @@ public class IotProductDO extends TenantBaseDO {
      */
     private Integer netType;
     /**
-     * 数据格式（编解码器类型）
+     * 协议类型
      * <p>
-     * 字典 {@link cn.iocoder.yudao.module.iot.enums.DictTypeConstants#CODEC_TYPE}
-     *
-     * 目的：用于 gateway-server 解析消息格式
+     * 枚举 {@link cn.iocoder.yudao.module.iot.core.enums.IotProtocolTypeEnum}
      */
-    private String codecType;
+    private String protocolType;
+    /**
+     * 序列化类型
+     * <p>
+     * 枚举 {@link cn.iocoder.yudao.module.iot.core.enums.IotSerializeTypeEnum}
+     */
+    private String serializeType;
 
 }

@@ -44,8 +44,8 @@ public class IotOtaTaskRecordController {
     @GetMapping("/get-status-statistics")
     @Operation(summary = "获得 OTA 升级记录状态统计")
     @Parameters({
-            @Parameter(name = "firmwareId", description = "固件编号", example = "1024"),
-            @Parameter(name = "taskId", description = "升级任务编号", example = "2048")
+        @Parameter(name = "firmwareId", description = "固件编号", example = "1024"),
+        @Parameter(name = "taskId", description = "升级任务编号", example = "2048")
     })
     @PreAuthorize("@ss.hasPermission('iot:ota-task-record:query')")
     public CommonResult<Map<Integer, Long>> getOtaTaskRecordStatusStatistics(
@@ -64,17 +64,17 @@ public class IotOtaTaskRecordController {
             return success(PageResult.empty());
         }
 
-        // 批量查询固件信息
-        Map<Long, IotOtaFirmwareDO> firmwareMap = otaFirmwareService.getOtaFirmwareMap(
-                convertSet(pageResult.getList(), IotOtaTaskRecordDO::getFromFirmwareId));
+         // 批量查询固件信息
+         Map<Long, IotOtaFirmwareDO> firmwareMap = otaFirmwareService.getOtaFirmwareMap(
+            convertSet(pageResult.getList(), IotOtaTaskRecordDO::getFromFirmwareId));
         Map<Long, IotDeviceDO> deviceMap = deviceService.getDeviceMap(
-                convertSet(pageResult.getList(), IotOtaTaskRecordDO::getDeviceId));
+            convertSet(pageResult.getList(), IotOtaTaskRecordDO::getDeviceId));
         // 转换为响应 VO
         return success(BeanUtils.toBean(pageResult, IotOtaTaskRecordRespVO.class, (vo) -> {
             MapUtils.findAndThen(firmwareMap, vo.getFromFirmwareId(), firmware ->
-                    vo.setFromFirmwareVersion(firmware.getVersion()));
+                vo.setFromFirmwareVersion(firmware.getVersion()));
             MapUtils.findAndThen(deviceMap, vo.getDeviceId(), device ->
-                    vo.setDeviceName(device.getDeviceName()));
+                vo.setDeviceName(device.getDeviceName()));
         }));
     }
 
