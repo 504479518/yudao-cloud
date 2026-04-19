@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -48,26 +49,20 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
     @Resource
     @Lazy // 延迟加载，避免循环依赖
     private MesDvMachineryTypeService machineryTypeService;
-
     @Resource
     @Lazy
     private MesMdWorkshopService workshopService;
-
     @Resource
     private MesWmBarcodeService barcodeService;
-
     @Resource
     @Lazy
     private MesDvCheckPlanMachineryService checkPlanMachineryService;
-
     @Resource
     @Lazy
     private MesDvCheckRecordService checkRecordService;
-
     @Resource
     @Lazy
     private MesDvMaintenRecordService maintenRecordService;
-
     @Resource
     @Lazy
     private MesDvRepairService repairService;
@@ -171,6 +166,16 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
     @Override
     public Long getMachineryCountByMachineryTypeId(Long machineryTypeId) {
         return machineryMapper.selectCountByMachineryTypeId(machineryTypeId);
+    }
+
+    @Override
+    public void updateMachineryLastCheckTime(Long machineryId, LocalDateTime lastCheckTime) {
+        machineryMapper.updateById(new MesDvMachineryDO().setId(machineryId).setLastCheckTime(lastCheckTime));
+    }
+
+    @Override
+    public void updateMachineryLastMaintenTime(Long machineryId, LocalDateTime lastMaintenTime) {
+        machineryMapper.updateById(new MesDvMachineryDO().setId(machineryId).setLastMaintenTime(lastMaintenTime));
     }
 
     @Override

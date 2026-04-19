@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.QC_TEMPLATE_INDICATOR_NOT_EXISTS;
@@ -79,6 +80,16 @@ public class MesQcTemplateIndicatorServiceImpl implements MesQcTemplateIndicator
     @Override
     public void deleteTemplateIndicatorByTemplateId(Long templateId) {
         templateIndicatorMapper.deleteByTemplateId(templateId);
+    }
+
+    @Override
+    public List<MesQcTemplateIndicatorDO> getTemplateIndicatorListByTemplateId(Long templateId) {
+        return templateIndicatorMapper.selectListByTemplateId(templateId);
+    }
+
+    @Override
+    public Long getTemplateIndicatorCountByUnitMeasureId(Long unitMeasureId) {
+        return templateIndicatorMapper.selectCountByUnitMeasureId(unitMeasureId);
     }
 
 }

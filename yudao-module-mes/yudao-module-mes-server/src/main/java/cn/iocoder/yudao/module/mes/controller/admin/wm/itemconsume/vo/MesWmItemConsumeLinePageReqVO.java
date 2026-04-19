@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+
 @Schema(description = "管理后台 - MES 物料消耗记录行分页 Request VO")
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -13,6 +15,7 @@ import lombok.ToString;
 public class MesWmItemConsumeLinePageReqVO extends PageParam {
 
     @Schema(description = "报工记录编号", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "报工记录编号不能为空")
     private Long feedbackId;
 
 }
