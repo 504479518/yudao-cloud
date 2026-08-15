@@ -51,6 +51,7 @@
         <spring-boot-admin.version>2.7.15</spring-boot-admin.version>
         <opentelemetry.version>1.39.0</opentelemetry.version>
         <!-- Test 测试相关 -->
+        <h2.version>2.1.214</h2.version>
         <podam.version>7.2.11.RELEASE</podam.version> <!-- Spring Boot 2.X 最多使用 7.2.11 版本 -->
         <jedis-mock.version>1.1.15</jedis-mock.version>
         <mockito-inline.version>4.11.0</mockito-inline.version>
@@ -61,10 +62,11 @@
         <jsoup.version>1.22.2</jsoup.version>
         <sensitive-word.version>0.29.5</sensitive-word.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
-        <lombok.version>1.18.46</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <hutool-5.version>5.8.46</hutool-5.version>
         <fastexcel.version>1.3.0</fastexcel.version>
+        <aviator.version>5.3.3</aviator.version>
         <velocity.version>2.4</velocity.version> <!-- JDK8 不能从 2.4 升级到 2.4.1，会报包不存在！！！！ -->
         <fastjson2.version>2.0.63</fastjson2.version>
         <guava.version>33.6.0-jre</guava.version>
@@ -493,6 +495,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.github.fppt</groupId> <!-- 单元测试，我们采用内嵌的 Redis 数据库 -->
                 <artifactId>jedis-mock</artifactId>
                 <version>${jedis-mock.version}</version>
@@ -562,6 +570,12 @@
                 <groupId>cn.idev.excel</groupId>
                 <artifactId>fastexcel</artifactId>
                 <version>${fastexcel.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.googlecode.aviator</groupId> <!-- 现金流量表公式计算 -->
+                <artifactId>aviator</artifactId>
+                <version>${aviator.version}</version>
             </dependency>
 
             <dependency>
