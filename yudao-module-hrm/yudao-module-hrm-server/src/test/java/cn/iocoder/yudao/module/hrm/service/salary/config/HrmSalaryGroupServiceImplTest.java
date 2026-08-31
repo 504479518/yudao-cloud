@@ -13,6 +13,7 @@ import cn.iocoder.yudao.module.hrm.service.employee.info.HrmEmployeeService;
 import cn.iocoder.yudao.module.system.api.dept.DeptApi;
 import cn.iocoder.yudao.module.system.api.dept.dto.DeptRespDTO;
 import javax.annotation.Resource;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,10 +33,10 @@ import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.*;
 import static cn.iocoder.yudao.module.hrm.enums.ErrorCodeConstants.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link HrmSalaryGroupServiceImpl} 的单元测试类
@@ -57,6 +58,11 @@ public class HrmSalaryGroupServiceImplTest extends BaseDbUnitTest {
     private HrmEmployeeService employeeService;
     @MockBean
     private DeptApi deptApi;
+
+    @BeforeEach
+    public void setUp() {
+        when(deptApi.validateDeptList(anyCollection())).thenReturn(success(true));
+    }
 
     @Test
     public void testCreateSalaryGroup_success() {
